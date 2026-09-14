@@ -1,0 +1,119 @@
+<title>PR Board</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+:root{
+  --bg:#0A0A0A;--surface:#161616;--surface-2:#1F1F1F;--border:#2C2C2C;
+  --text:#FFFFFF;--muted:#8F8F8F;--accent:#E4002B;--accent-dim:#3D0912;--warn:#FFB020;
+  --display:"Oswald","Arial Narrow",sans-serif;--body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+.stripe{height:4px;background:var(--accent)}
+header{padding:18px 18px 0;display:flex;flex-direction:column;gap:14px}
+.hrow{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.eyebrow{font-family:var(--display);font-size:12px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+h1{margin:2px 0 0;font-size:40px;font-weight:900;line-height:1;letter-spacing:.02em}
+.loc{position:relative}
+.loc select{appearance:none;-webkit-appearance:none;background:var(--surface);color:var(--text);border:1.5px solid var(--accent);border-radius:6px;padding:8px 30px 8px 30px;font:600 13px var(--body);cursor:pointer}
+.loc:before{content:"";position:absolute;left:11px;top:50%;width:11px;height:11px;transform:translateY(-58%);background:var(--accent);border-radius:50% 50% 50% 0;rotate:-45deg}
+.loc:after{content:"";position:absolute;right:12px;top:50%;width:7px;height:7px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:translateY(-70%) rotate(45deg)}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 14px}
+.search svg{flex:none;width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2}
+.search input{flex:1;min-width:0;background:none;border:0;color:var(--text);font:14px var(--body);outline:none}
+.search input::placeholder{color:var(--muted)}
+.search input:focus-visible{outline:none}
+.search:focus-within{border-color:var(--accent)}
+main{flex:1;padding:6px 18px 96px;display:flex;flex-direction:column;gap:22px}
+.group h2{margin:0 0 4px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
+.group h2:before{content:"";width:4px;height:16px;background:var(--accent)}
+.group h2 small{font-family:var(--display);font-weight:400;font-size:11px;color:var(--muted);letter-spacing:.04em}
+.row{display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.row:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.name{font-weight:500;font-size:14px;text-wrap:balance}
+.name .part{font-family:var(--display);font-size:11px;color:var(--muted);letter-spacing:.06em;margin-right:6px;padding:1px 5px;border:1px solid var(--border);border-radius:3px;vertical-align:1px}
+.name .flag{margin-left:6px;font-size:12px}
+.sets{margin-top:3px;font-family:var(--display);font-size:13px;color:var(--muted);letter-spacing:.03em;font-variant-numeric:tabular-nums}
+.sets b{font-weight:500;color:var(--warn)}
+.w{font-family:var(--display);font-weight:600;font-size:22px;color:var(--accent);letter-spacing:.01em;text-align:right;font-variant-numeric:tabular-nums;line-height:1}
+.w small{font-size:12px;font-weight:400;color:var(--muted);margin-left:2px}
+.w.zero{font-size:14px;color:var(--muted);font-weight:500}
+.detail{grid-column:1/-1;display:none;padding:10px 12px 2px;font-size:13px;color:var(--muted)}
+.detail dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.detail dt{font-family:var(--display);letter-spacing:.06em;font-size:11px;color:var(--accent);text-transform:uppercase;padding-top:2px}
+.detail dd{margin:0;color:var(--text)}
+.row.open .detail{display:block}
+.row.open{background:linear-gradient(90deg,var(--accent-dim),transparent 60%);margin:0 -18px;padding-left:18px;padding-right:18px}
+.empty{padding:40px 0;text-align:center;color:var(--muted)}
+nav{position:fixed;left:0;right:0;bottom:0;padding:8px 16px calc(12px + env(safe-area-inset-bottom));pointer-events:none}
+.tabs{max-width:448px;margin:0 auto;height:56px;padding:6px;display:flex;gap:2px;background:rgba(22,22,22,.9);border:1px solid var(--border);border-radius:8px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);pointer-events:auto}
+.tab{flex:1;border:0;background:none;color:var(--muted);border-radius:6px;font:400 11px var(--body);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:0}
+.tab .n{font-family:var(--display);font-size:15px;font-weight:500;letter-spacing:.04em;line-height:1}
+.tab.on{background:var(--accent);color:#fff;font-weight:600}
+.tab:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+@media (prefers-reduced-motion:no-preference){.row{transition:background .15s}}
+</style>
+<div class="app">
+  <div class="stripe"></div>
+  <header>
+    <div class="hrow">
+      <div><div class="eyebrow" id="eyebrow">PR BOARD</div><h1 id="title">背</h1></div>
+      <div class="loc"><select id="loc" aria-label="地點"></select></div>
+    </div>
+    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="搜尋動作，例如「窄握」" autocomplete="off"></label>
+  </header>
+  <main id="main"></main>
+  <nav><div class="tabs" id="tabs"></div></nav>
+</div>
+<script id="data" type="application/json">
+{"updated":"2026-09-07","note":"訓練速查表單一資料來源。part=部位、equipment=器材類型、location=地點（空字串=不分地點）、weight=kg（0=空槓/自重）、sets=每組次數（F=力竭）、dateApprox=日期為約略值。","items":[{"part":"胸","equipment":"槓片","location":"台北","name":"上斜坐姿槓片胸推","weight":20,"sets":"8/7/4F","next":"留著爬，緊盯第3組力竭訊號","date":"2026-09-03","dateApprox":true,"flag":"","note":""},{"part":"胸","equipment":"槓片","location":"台北","name":"分動坐姿槓片往內胸推","weight":12.5,"sets":"10/10/10","next":"下次跳15kg，緊盯力竭訊號（此重量曾連續崩潰2次）","date":"2026-07-31","dateApprox":false,"flag":"","note":"止跌回穩"},{"part":"胸","equipment":"槓片","location":"學府","name":"分動坐姿槓片往內胸推","weight":15,"sets":"10/10/10","next":"下次跳重測試","date":"2026-09-05","dateApprox":true,"flag":"","note":"跟台北同名不同機器"},{"part":"胸","equipment":"槓片","location":"台北","name":"躺姿槓片胸推","weight":15,"sets":"8/6/6","next":"維持15kg補到3組穩定再談加重","date":"2026-07-13","dateApprox":false,"flag":"","note":""},{"part":"胸","equipment":"槓片","location":"台北","name":"下胸坐姿槓片胸推","weight":25,"sets":"7/7/7","next":"留著爬，下次每組多做1下","date":"2026-08-03","dateApprox":false,"flag":"","note":""},{"part":"胸","equipment":"槓片","location":"台北","name":"半固定坐姿夾胸","weight":39,"sets":"11/8/6F","next":"維持觀察，不加重","date":"2026-09-03","dateApprox":true,"flag":"","note":"仍力竭邊緣"},{"part":"胸","equipment":"槓片","location":"學府","name":"半固定坐姿夾胸","weight":39,"sets":"11/10/10","next":"各自定錨，觀察後續","date":"2026-09-05","dateApprox":true,"flag":"","note":"跟台北同名不同機器，狀態明顯較好"},{"part":"胸","equipment":"槓片","location":"台北","name":"蝴蝶夾胸（高把位）","weight":27,"sets":"10/10/4F","next":"求第3組追上10下","date":"2026-07-29","dateApprox":false,"flag":"","note":""},{"part":"胸","equipment":"槓片","location":"學府","name":"坐姿窄握槓片胸推","weight":20,"sets":"6/4F/—","next":"之後這台從15kg開始爬","date":"2026-09-05","dateApprox":true,"flag":"⚠","note":"第3組未做"},{"part":"胸","equipment":"插銷","location":"台北","name":"坐姿窄距插銷胸推","weight":25,"sets":"8/8/10","next":"同重量求三組全上限再加重","date":"2026-07-16","dateApprox":false,"flag":"","note":""},{"part":"胸","equipment":"滑輪","location":"台北","name":"滑輪夾胸（低位到高位，練上胸）","weight":null,"sets":"","next":"首測記錄，抓2-3×12-15力竭邊緣重量","date":null,"dateApprox":false,"flag":"","note":"新加入菜單，還沒測"},{"part":"胸","equipment":"自由重量","location":"台中","name":"啞鈴臥推","weight":16,"sets":"10/10/10/10","next":"18kg，全組≥6留著爬／<6退回16kg擠滿再跳","date":"2026-06-19","dateApprox":false,"flag":"🎉","note":"主項，兩年卡關突破"},{"part":"背","equipment":"槓片","location":"台北","name":"坐姿槓片反手平行划船","weight":20,"sets":"10/10/10","next":"留著爬，持續觀察腰部是否維持乾淨","date":"2026-08-27","dateApprox":true,"flag":"🎉","note":"單邊；改單邊後腰不再代償"},{"part":"背","equipment":"槓片","location":"台北","name":"坐姿正手槓片下拉","weight":10,"sets":"7/7","next":"維持10kg求3組穩定","date":"2026-08-18","dateApprox":false,"flag":"","note":"神經連結階段"},{"part":"背","equipment":"槓片","location":"學府","name":"坐姿正手槓片下拉（非上背）","weight":20,"sets":"雙6／單6/5","next":"續測站穩重量","date":"2026-09-06","dateApprox":true,"flag":"","note":"卡關突破中；跟台北同名不同機器"},{"part":"背","equipment":"槓片","location":"台北","name":"反手槓片坐姿下拉","weight":27.5,"sets":"8/8/8","next":"留著爬，每組多做1下","date":"2026-07-15","dateApprox":false,"flag":"","note":""},{"part":"背","equipment":"槓片","location":"台北","name":"槓片坐姿固定划船","weight":15,"sets":"10/10","next":"固定用純雙邊3組直線協議","date":"2026-07-03","dateApprox":false,"flag":"","note":"探索性測試"},{"part":"背","equipment":"插銷","location":"台北","name":"插銷坐姿固定分動打開正手下拉","weight":27,"sets":"8/8/8","next":"延續觀察","date":"2026-07-15","dateApprox":false,"flag":"","note":"可能與6/24記錄的27kg同台"},{"part":"背","equipment":"插銷","location":"台北","name":"坐姿插銷繩帶寬握划船","weight":18,"sets":"12/11F/9F","next":"同重量求3組全滿12","date":"2026-08-12","dateApprox":false,"flag":"","note":""},{"part":"背","equipment":"滑輪","location":"台北","name":"坐姿窄握滑輪划船","weight":34.3,"sets":"9/9/9","next":"留著爬，下次每組多做1下","date":"2026-09-06","dateApprox":true,"flag":"","note":""},{"part":"背","equipment":"滑輪","location":"台北","name":"坐姿橫桿下拉（寬握）","weight":34.2,"sets":"12/12/12","next":"下次加重（+一級配重或+2.5kg）","date":"2026-08-12","dateApprox":false,"flag":"🎉","note":"3組全滿12達成目標"},{"part":"背","equipment":"滑輪","location":"台北","name":"站姿滑輪直臂下拉","weight":18,"sets":"8/8/8","next":"同重量求三組全上限再加重","date":"2026-07-25","dateApprox":false,"flag":"","note":"背部動作，跟三頭下壓不同"},{"part":"背","equipment":"滑輪","location":"美村店","name":"單邊坐姿滑輪划船","weight":36,"sets":"6/6/6","next":"留著爬，下次每組多做1下","date":"2026-08-10","dateApprox":false,"flag":"","note":"單邊"},{"part":"背","equipment":"滑輪","location":"台北","name":"面拉（拇指朝上對握，雙邊）","weight":4.5,"sets":"9/9/9","next":"求無代償的9/9/9再談加重","date":"2026-07-25","dateApprox":false,"flag":"⚠","note":"第2、3組後段代償"},{"part":"背","equipment":"滑輪","location":"台北","name":"面拉（單邊，僅左側）","weight":4.5,"sets":"6/5","next":"下次補右側對比","date":"2026-07-25","dateApprox":false,"flag":"","note":""},{"part":"腿","equipment":"槓片","location":"台北","name":"槓片跪姿腿後側","weight":5,"sets":"","next":"求5kg 3組全滿且無腰代償再談加重","date":"2026-08-21","dateApprox":false,"flag":"⚠","note":"10kg有腰代償，主動降重重新爬"},{"part":"腿","equipment":"槓片","location":"學府","name":"槓片跪姿腿後側","weight":0,"sets":"","next":"先把基本次數墊起來再談加重","date":"2026-09-05","dateApprox":true,"flag":"⚠","note":"從10kg降到空槓才能完成；跟台北同名不同機器"},{"part":"腿","equipment":"槓片","location":"台北","name":"坐姿槓片單邊腿踢（leg extension）","weight":10,"sets":"10/10/10","next":"持續觀察，加重時留意末端角度","date":"2026-09-06","dateApprox":true,"flag":"🎉","note":"單邊；左右不對稱訊號暫緩"},{"part":"腿","equipment":"槓片","location":"台北","name":"坐姿槓片單邊腿踢勾（leg curl）","weight":10,"sets":"6/6","next":"同重量10kg求兩組穩定不掉組","date":"2026-07-16","dateApprox":false,"flag":"","note":"單邊；曾降重5kg×5力竭"},{"part":"腿","equipment":"插銷","location":"台北","name":"固定腿推","weight":64,"sets":"10/10","next":"補滿3-4組全滿＋隔天左膝乾淨才跳70","date":"2026-07-14","dateApprox":false,"flag":"⚠","note":"左膝監控：膝對腳尖、下放~90度"},{"part":"腿","equipment":"插銷","location":"台中","name":"固定腿推","weight":59,"sets":"10/10/10","next":"64kg","date":"2026-06-18","dateApprox":false,"flag":"","note":"跟台北不同機器"},{"part":"腿","equipment":"插銷","location":"台北","name":"開腿機（髖外展）","weight":27.5,"sets":"8/8/5F","next":"退回23kg，擠滿3組全滿15再跳","date":"2026-07-28","dateApprox":false,"flag":"⚠","note":"跳重失敗"},{"part":"腿","equipment":"插銷","location":"台北","name":"半固定開腿機（髖外展）","weight":23,"sets":"15/15/15","next":"下次跳25.5kg","date":"2026-08-07","dateApprox":false,"flag":"🎉","note":"達標"},{"part":"腿","equipment":"插銷","location":"台北","name":"髖內收（機械式）","weight":36,"sets":"10/10/10","next":"留著爬，下次可加重","date":"2026-08-21","dateApprox":false,"flag":"","note":"三度達標；8/10那筆疑似美村店待確認"},{"part":"腿","equipment":"繩帶","location":"台北","name":"繩帶固定腿伸（單腿）","weight":11,"sets":"8/10/10","next":"先加抓帶子暖身組，求3組穩定10/10/10","date":"2026-08-21","dateApprox":false,"flag":"","note":""},{"part":"腿","equipment":"自由重量","location":"台中","name":"保加利亞分腿蹲","weight":10,"sets":"","next":"依當週狀況微調","date":"2026-06-16","dateApprox":false,"flag":"","note":"每邊"},{"part":"腿","equipment":"自由重量","location":"台中","name":"壺鈴硬舉","weight":24,"sets":"","next":"準備轉六角槓高把位輕重量起步","date":null,"dateApprox":false,"flag":"","note":"器材上限"},{"part":"腿","equipment":"自由重量","location":"台中","name":"壺鈴單腿硬舉","weight":4,"sets":"10/10/10","next":"下次補左右分邊數據","date":"2026-07-25","dateApprox":false,"flag":"","note":""},{"part":"腿","equipment":"自由重量","location":"台中","name":"啞鈴單腿硬舉","weight":6,"sets":"10/10/10","next":"待確認握法（貼中線 vs 垂於側邊）","date":"2026-07-28","dateApprox":false,"flag":"⚠","note":"待確認與壺鈴版本關係"},{"part":"腿","equipment":"自重","location":"台北","name":"後腳抬高蹲","weight":0,"sets":"12/12","next":"自重求穩定3組","date":"2026-07-16","dateApprox":false,"flag":"","note":"跟台中保加利亞分腿蹲各自定錨"},{"part":"肩","equipment":"槓片","location":"台北","name":"坐姿槓片肩推（單邊）","weight":10,"sets":"6/6/7","next":"同重量求3組穩定再談加重","date":"2026-08-12","dateApprox":false,"flag":"","note":""},{"part":"肩","equipment":"槓片","location":"台北","name":"坐姿固定側平舉","weight":22,"sets":"10/10/10","next":"留著爬，下次每組多做1下；務必排在新鮮狀態最前面","date":"2026-09-06","dateApprox":true,"flag":"⚠","note":"跳重歸屬待確認"},{"part":"肩","equipment":"槓片","location":"美村店","name":"半固定側平舉","weight":13,"sets":"12/12/12","next":"視情況加重或衝次數","date":"2026-08-10","dateApprox":false,"flag":"","note":""},{"part":"肩","equipment":"插銷","location":"台北","name":"坐姿插銷連動肩推","weight":18,"sets":"","next":"建立新基準線，求3組穩定再談加重","date":"2026-08-21","dateApprox":false,"flag":"⚠","note":"加入肩胛骨上轉技巧，從25.5kg退回重新爬"},{"part":"肩","equipment":"插銷","location":"台中","name":"坐姿插銷連動肩推","weight":23,"sets":"10/10/10","next":"下次加重","date":"2026-07-04","dateApprox":false,"flag":"🎉","note":"跟台北不同機器"},{"part":"肩","equipment":"滑輪","location":"美村店","name":"繩索坐姿肩推","weight":6,"sets":"10/10/10","next":"下次可加重測試","date":"2026-08-10","dateApprox":false,"flag":"","note":""},{"part":"肩","equipment":"自由重量","location":"台北","name":"站姿空槓肩推","weight":0,"sets":"8/8/4F","next":"暫緩加重觀察","date":"2026-07-21","dateApprox":false,"flag":"","note":"空槓"},{"part":"肩","equipment":"自由重量","location":"台中","name":"站姿側平舉（啞鈴）","weight":8,"sets":"10/10/6F","next":"繼續擠3組全滿10，別提前跳9kg","date":"2026-07-25","dateApprox":false,"flag":"","note":""},{"part":"手臂","equipment":"滑輪","location":"台北","name":"三頭下壓（站姿滑輪）","weight":20.3,"sets":"15/15/10F","next":"求第3組追上再談加重","date":"2026-07-20","dateApprox":false,"flag":"","note":"美村店同名23kg×6/6落差大，另計"},{"part":"手臂","equipment":"滑輪","location":"台北","name":"二頭彎舉（HOIST 繩索）","weight":30,"sets":"10/10/10","next":"留著爬，下次每組多做1下","date":"2026-08-06","dateApprox":false,"flag":"","note":""},{"part":"手臂","equipment":"滑輪","location":"學府","name":"正手窄握滑輪下拉（練肱肌）","weight":32,"sets":"8/8/8","next":"下次可加重測試","date":"2026-09-05","dateApprox":true,"flag":"","note":""},{"part":"核心","equipment":"自重","location":"","name":"單腳提踵（階段2，平地慢速）","weight":0,"sets":"13/13/13","next":"每邊3×12-15，接近20再進階段3（加停頓）","date":"2026-07-25","dateApprox":false,"flag":"","note":"階段4負重待PT放行"},{"part":"核心","equipment":"自重","location":"","name":"左單腳墊腳蹬地","weight":0,"sets":"40","next":"待處置建議確認前不加量","date":"2026-07-01","dateApprox":false,"flag":"","note":"末段借力"},{"part":"核心","equipment":"自重","location":"","name":"右單腳墊腳蹬地","weight":0,"sets":"45","next":"同左","date":"2026-07-03","dateApprox":false,"flag":"","note":""},{"part":"核心","equipment":"自重","location":"","name":"臀橋（等長）","weight":0,"sets":"60秒×3","next":"維持","date":"2026-07-07","dateApprox":false,"flag":"","note":""},{"part":"核心","equipment":"自重","location":"","name":"右單腳死蟲下放","weight":0,"sets":"10/11/11","next":"維持","date":"2026-07-14","dateApprox":false,"flag":"","note":""},{"part":"核心","equipment":"自重","location":"","name":"左單腳死蟲下放","weight":0,"sets":"8/5/5","next":"觀察左右差距","date":"2026-07-15","dateApprox":false,"flag":"⚠","note":"明顯弱於右邊，跟左側代償鏈一致"},{"part":"核心","equipment":"自重","location":"","name":"內外勾腳","weight":0,"sets":"50/50","next":"觀察項，暫無加量計畫","date":"2026-07-18","dateApprox":false,"flag":"","note":"踝關節活動度"},{"part":"核心","equipment":"自重","location":"","name":"死蟲式90度交替（彎腳）","weight":0,"sets":"28/28/28","next":"持續進步，無需特別調整","date":"2026-08-21","dateApprox":false,"flag":"","note":"總量84"}]}
+</script>
+<script>
+const DB=JSON.parse(document.getElementById('data').textContent);
+const PARTS=["胸","背","腿","肩","手臂","核心"];
+const EQ_ORDER=["槓片","插銷","滑輪","繩帶","自由重量","自重"];
+const LOCS=["台北","台中","美村店","學府"];
+let part="背",loc="",q="",openId=null;
+try{part=localStorage.getItem('pb.part')||part;loc=localStorage.getItem('pb.loc')||loc;}catch(e){}
+if(!PARTS.includes(part))part="背";
+const $=s=>document.querySelector(s);
+const tabs=$('#tabs'),main=$('#main'),sel=$('#loc');
+sel.innerHTML='<option value="">全部地點</option>'+LOCS.map(l=>`<option value="${l}">${l}</option>`).join('');
+sel.value=loc;
+$('#eyebrow').textContent='PR BOARD · 更新 '+DB.updated.slice(5).replace('-','/');
+PARTS.forEach(p=>{const b=document.createElement('button');b.className='tab';b.innerHTML=`<span class="n">${count(p)}</span>${p}`;b.onclick=()=>{part=p;q="";$('#q').value="";save();render();};tabs.appendChild(b);});
+sel.onchange=()=>{loc=sel.value;save();render();};
+$('#q').oninput=e=>{q=e.target.value.trim();render();};
+function save(){try{localStorage.setItem('pb.part',part);localStorage.setItem('pb.loc',loc);}catch(e){}}
+function count(p){return DB.items.filter(i=>i.part===p&&(!loc||!i.location||i.location===loc)).length}
+function fmtDate(i){if(!i.date)return"—";const d=i.date.slice(5).replace('-','/');return(i.dateApprox?"約 ":"")+d}
+function fmtW(i){if(i.weight===null)return'<span class="w zero">未測</span>';if(i.weight===0)return'<span class="w zero">'+(i.equipment==="自重"?"自重":"空槓")+'</span>';return`<span class="w">${i.weight}<small>kg</small></span>`}
+function fmtSets(s){return s?s.replace(/(\d+)F/g,'<b>$1F</b>'):'<span style="opacity:.5">—</span>'}
+function render(){
+  const searching=q.length>0;
+  const list=DB.items.filter(i=>(searching?i.name.includes(q):i.part===part)&&(!loc||!i.location||i.location===loc));
+  $('#title').textContent=searching?`「${q}」`:part;
+  [...tabs.children].forEach((b,k)=>{b.classList.toggle('on',!searching&&PARTS[k]===part);b.querySelector('.n').textContent=count(PARTS[k]);});
+  if(!list.length){main.innerHTML='<div class="empty">這個組合沒有紀錄</div>';return;}
+  const groups=new Map();list.forEach(i=>{const k=i.equipment;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(i);});
+  main.innerHTML=[...groups.entries()].sort((a,b)=>EQ_ORDER.indexOf(a[0])-EQ_ORDER.indexOf(b[0])).map(([eq,items])=>`
+    <section class="group"><h2>${eq}<small>${items.length} 個</small></h2>${items.map(row).join('')}</section>`).join('');
+  main.querySelectorAll('.row').forEach(r=>{r.onclick=()=>{openId=openId===r.dataset.id?null:r.dataset.id;render();};r.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();r.click();}}});
+}
+function row(i){
+  const id=i.part+i.location+i.name;
+  const locTxt=i.location||"不分地點";
+  return`<div class="row${openId===id?' open':''}" data-id="${id}" tabindex="0">
+    <div><div class="name">${q?`<span class="part">${i.part}</span>`:''}${i.name}${i.flag?`<span class="flag">${i.flag}</span>`:''}</div>
+    <div class="sets">${fmtSets(i.sets)}${loc?'':' · '+locTxt}</div></div>
+    ${fmtW(i)}
+    <div class="detail"><dl>
+      <dt>下次</dt><dd>${i.next||"—"}</dd>
+      ${i.note?`<dt>備註</dt><dd>${i.note}</dd>`:''}
+      <dt>地點</dt><dd>${locTxt}</dd>
+      <dt>記錄</dt><dd>${fmtDate(i)}</dd>
+    </dl></div></div>`;
+}
+render();
+</script>
