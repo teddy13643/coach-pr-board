@@ -8,6 +8,7 @@
 :root{
   --bg:#0A0A0A;--surface:#161616;--surface-2:#1F1F1F;--border:#2C2C2C;
   --text:#FFFFFF;--muted:#8F8F8F;--accent:#E4002B;--accent-dim:#3D0912;--warn:#FFB020;
+  color-scheme:dark;
   --display:"Oswald","Arial Narrow",sans-serif;--body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
 }
 *{box-sizing:border-box}
@@ -79,7 +80,7 @@ const PARTS=["胸","背","腿","肩","手臂","核心"];
 const EQ_ORDER=["槓片","插銷","滑輪","繩帶","自由重量","自重"];
 const TIERS=["主追蹤","輪替","康復觀察"];
 function tier(i){return i.rehab?"康復觀察":stale(i)?"輪替":"主追蹤"}
-const LOCS=["台中","美村店","學府"];
+const LOCS=[...new Set(DB.items.map(i=>i.location).filter(Boolean))];
 let part="背",loc="",q="",openId=null;
 try{part=localStorage.getItem('pb.part')||part;loc=localStorage.getItem('pb.loc')||loc;}catch(e){}
 if(!PARTS.includes(part))part="背";
