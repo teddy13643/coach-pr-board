@@ -49,6 +49,7 @@ main{flex:1;padding:6px 18px 96px;display:flex;flex-direction:column;gap:22px}
 .detail dd{margin:0;color:var(--text)}
 .row.open .detail{display:block}
 .row.open{background:linear-gradient(90deg,var(--accent-dim),transparent 60%);margin:0 -18px;padding-left:18px;padding-right:18px}
+.banner{background:var(--accent-dim);border-left:3px solid var(--accent);border-radius:4px;padding:10px 12px;font-size:13px;font-weight:500}
 .empty{padding:40px 0;text-align:center;color:var(--muted)}
 nav{position:fixed;left:0;right:0;bottom:0;padding:8px 16px calc(12px + env(safe-area-inset-bottom));pointer-events:none}
 .tabs{max-width:448px;margin:0 auto;height:56px;padding:6px;display:flex;gap:2px;background:rgba(22,22,22,.9);border:1px solid var(--border);border-radius:8px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);pointer-events:auto}
@@ -64,6 +65,7 @@ nav{position:fixed;left:0;right:0;bottom:0;padding:8px 16px calc(12px + env(safe
     <div class="hrow">
       <div><div class="eyebrow" id="eyebrow">PR BOARD</div><h1 id="title">背</h1></div>
     </div>
+    <div class="banner" id="banner" hidden></div>
     <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="搜尋動作，例如「窄握」" autocomplete="off"></label>
   </header>
   <main id="main"></main>
@@ -76,13 +78,14 @@ __DATA__
 const DB=JSON.parse(document.getElementById('data').textContent);
 const PARTS=["胸","背","腿","肩","手臂","核心"];
 const EQ_ORDER=["槓片","插銷","滑輪","繩帶","自由重量","自重"];
-const TIERS=["主追蹤","輪替","康復觀察"];
-function tier(i){return i.rehab?"康復觀察":stale(i)?"輪替":"主追蹤"}
+const TIERS=["核心清單","主追蹤","輪替","康復觀察"];
+function tier(i){return i.core?"核心清單":i.rehab?"康復觀察":stale(i)?"輪替":"主追蹤"}
 let part="背",q="",openId=null;
 try{part=localStorage.getItem('pb.part')||part;}catch(e){}
 if(!PARTS.includes(part))part="背";
 const $=s=>document.querySelector(s);
 const tabs=$('#tabs'),main=$('#main');
+if(DB.banner){const b=$('#banner');b.textContent=DB.banner;b.hidden=false;}
 $('#eyebrow').textContent='PR BOARD · 更新 '+DB.updated.slice(5).replace('-','/');
 PARTS.forEach(p=>{const b=document.createElement('button');b.className='tab';b.innerHTML=`<span class="n">${count(p)}</span>${p}`;b.onclick=()=>{part=p;q="";$('#q').value="";save();render();};tabs.appendChild(b);});
 $('#q').oninput=e=>{q=e.target.value.trim();render();};
@@ -112,7 +115,7 @@ function render(){
   if(!list.length){main.innerHTML='<div class="empty">這個組合沒有紀錄</div>';return;}
   const groups=new Map();list.forEach(i=>{const k=tier(i);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(i);});
   main.innerHTML=[...groups.entries()].sort((a,b)=>TIERS.indexOf(a[0])-TIERS.indexOf(b[0])).map(([eq,items])=>(items.sort((x,y)=>EQ_ORDER.indexOf(x.equipment)-EQ_ORDER.indexOf(y.equipment)),[eq,items])).map(([eq,items])=>`
-    <section class="group"><h2>${eq}<small>${items.length} 個${eq==="主追蹤"?" · 6 週內有練":eq==="輪替"?" · 超過 6 週沒練":""}</small></h2>${items.map(row).join('')}</section>`).join('');
+    <section class="group"><h2>${eq}<small>${items.length} 個${eq==="核心清單"?" · 每次先做場館有的這幾台":eq==="主追蹤"?" · 6 週內有練":eq==="輪替"?" · 超過 6 週沒練":""}</small></h2>${items.map(row).join('')}</section>`).join('');
   main.querySelectorAll('.row').forEach(r=>{r.onclick=()=>{openId=openId===r.dataset.id?null:r.dataset.id;render();};r.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();r.click();}}});
 }
 function row(i){
@@ -120,7 +123,7 @@ function row(i){
   const assistNote=i.assist?'輔助越小越難':'';
   return`<div class="row${openId===id?' open':''}" data-id="${id}" tabindex="0">
     <div><div class="name">${q?`<span class="part">${i.part}</span>`:''}${i.name}${i.flag?`<span class="flag">${i.flag}</span>`:''}</div>
-    <div class="sets">${setsLine(i)}${[i.equipment,assistNote].filter(Boolean).map(t=>' · '+t).join('')}</div></div>
+    <div class="sets">${setsLine(i)}${[i.range&&i.range+' 下',i.equipment,assistNote].filter(Boolean).map(t=>' · '+t).join('')}</div></div>
     ${fmtW(i)}
     <div class="detail"><dl>
       <dt>下次</dt><dd>${i.next||"—"}</dd>
